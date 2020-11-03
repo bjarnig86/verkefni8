@@ -12,18 +12,31 @@
  *
  * @param {string} str Strengur sem skal kóða, aðeins stafir í stafrófi
  * @param {number} n Hliðrun, heiltala á bilinu [0, lengd stafrófs]
- * @param {alphabet} alphabet Stafrófið, notað í hliðrun
  * @returns {string} Upprunalegi strengurinn hliðraður um n til hægri
  */
 function encode(str, n, alphabet = '') {
-  // dæmi sem notar for lykkju
-  const upper = str.toLocaleUpperCase();
+  const m = n % 32;
+  const upperCaseStr = str.toUpperCase();
+  const aplhaArray = alphabet.split('');
+  let encodedString = '';
 
-  let result = '';
-  for (let i = 0; i < str.length; i++) {
-    result += alphabet[(alphabet.indexOf(upper[i]) + n) % alphabet.length];
+  for (let i = 0; i < upperCaseStr.length; i++) {
+    const currentLetter = upperCaseStr[i];
+    if (currentLetter === ' ') {
+      encodedString += ' ';
+      continue;
+    }
+    const currentIndex = aplhaArray.indexOf(currentLetter);
+    if (currentIndex >= 0 && currentIndex < alphabet.length) {
+      let newIndex = currentIndex + m;
+      if (newIndex > 31) newIndex -= 32;
+      if (newIndex < 0) newIndex += 32;
+      if (str[i] === upperCaseStr[i].toLowerCase()) {
+        encodedString += aplhaArray[newIndex].toLowerCase();
+      } else encodedString += aplhaArray[newIndex];
+    }
   }
-  return result;
+  return encodedString;
 }
 
 /**
@@ -31,18 +44,32 @@ function encode(str, n, alphabet = '') {
  *
  * @param {string} str Strengur sem skal afkóða, aðeins stafir í stafrófi
  * @param {number} n Hliðrun, heiltala á bilinu [0, lengd stafrófs]
- * @param {alphabet} alphabet Stafrófið, notað í hliðrun
  * @returns {string} Upprunalegi strengurinn hliðraður um n til vinstri
  */
 function decode(str, n, alphabet = '') {
-  // dæmi sem notar „fallaforritun“
-  return str
-    .toLocaleUpperCase()
-    .split('')
-    .map(s => alphabet.indexOf(s) - n) // hliðruð staðsetning stafs
-    .map(i => i < 0 ? alphabet.length + i : i) // ef i verður neikvætt, förum aftast í stafróf
-    .map(i => alphabet[i])
-    .join('');
+  const m = n % 32;
+  const upperCaseStr = str.toUpperCase();
+  const aplhaArray = alphabet.split('');
+  let decodedString = '';
+
+  for (let i = 0; i < upperCaseStr.length; i++) {
+    const currentLetter = upperCaseStr[i];
+    if (currentLetter === ' ') {
+      decodedString += ' ';
+      continue;
+    }
+
+    const currentIndex = aplhaArray.indexOf(currentLetter);
+    if (currentIndex >= 0 && currentIndex < alphabet.length) {
+      let newIndex = currentIndex - m;
+      if (newIndex > 31) newIndex -= 32;
+      if (newIndex < 0) newIndex += 32;
+      if (str[i] === upperCaseStr[i].toLowerCase()) {
+        decodedString += aplhaArray[newIndex].toLowerCase();
+      } else decodedString += aplhaArray[newIndex];
+    }
+  }
+  return decodedString;
 }
 
 function empty(el) {
