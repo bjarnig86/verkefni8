@@ -5,7 +5,7 @@
   "main": "scripts.js",
   "scripts": {
     "dev": "browser-sync start --server --files scripts.js styles.css",
-    "test": "eslint scripts.js"
+    "test": "eslint scripts.js -w"
   },
   "repository": {
     "type": "git",
